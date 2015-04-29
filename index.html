@@ -7,8 +7,398 @@
     <meta name="keywords" content="NichaneAljadida">
     <meta name="description" content="NichaneAljadida">
     <!--stylesheets-->
-    <link rel="stylesheet" href="http://squirrellabs.net/theme/tetris404/error404/css/popup.css">
-    <link rel="stylesheet" href="http://squirrellabs.net/theme/tetris404/error404/css/style.css">
+<style>
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(51, 51, 51, 0.5);
+        opacity: 0;
+        -moz-transition: all 0.3s linear;
+        -o-transition: all 0.3s linear;
+        -webkit-transition: all 0.3s linear;
+        transition: all 0.3s linear;
+      }
+      .overlay.is-active {
+        opacity: 1;
+        z-index: 1000;
+      }
+
+      .popup {
+        position: fixed;
+        width: 300px;
+        height: 360px;
+        left: 50%;
+        top: 50%;
+        margin-left: -150px;
+        margin-top: -180px;
+        z-index: -1;
+        opacity: 0;
+        border-radius: 5px;
+        -moz-transform: translate3d(0, -100%, 0);
+        -ms-transform: translate3d(0, -100%, 0);
+        -o-transform: translate3d(0, -100%, 0);
+        -webkit-transform: translate3d(0, -100%, 0);
+        transform: translate3d(0, -100%, 0);
+        -moz-transition: all 0.3s ease-in;
+        -o-transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+        transition: all 0.3s ease-in;
+        font-family: sans-serif;
+      }
+      .popup.is-active {
+        opacity: 1;
+        z-index: 1001;
+        -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        -o-transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        background: rgba(0,0,0,0.8)
+      }
+      .popup .popup-i {
+        position: relative;
+        padding: 15px;
+      }
+      .popup .popup__close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 100;
+      }
+      .popup .popup__close:hover {
+        cursor: pointer;
+        opacity: 0.7;
+      }
+      .popup .popup__title {
+        color: #c71b31;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+      .popup__content *{
+          font-size: 12px !important;
+          color: white;
+      }
+      .btn {
+        position: absolute;
+        z-index: 9999;
+        top: 32px;
+        left: 50%;
+        margin-left: -20px;
+        margin-top: -17px;
+        border: 0px solid rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-family: Arial, sans-serif;
+        text-transform: lowercase;
+        text-decoration: none;
+        padding: 0;
+        font-size: 16px;
+        width: 40px;
+        height: 34px;
+        line-height: 30px;
+        cursor: pointer;
+        text-align: center;
+        -moz-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        -webkit-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+      }
+      .btn:hover {
+        background: white;
+        border: 0px solid white;
+        color: #e74c3c;
+      }
+
+</style>
+<style>
+  @import url(http://fonts.googleapis.com/css?family=Press+Start+2P);
+
+@font-face {
+    font-family: 'HelveticaNeueLTPro-Bd';
+    src: url('../fonts/neueltpro-bd-webfont.eot');
+    src: url('../fonts/neueltpro-bd-webfont.eot.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/neueltpro-bd-webfont.woff') format('woff'),
+         url('../fonts/neueltpro-bd-webfont.ttf')  format('truetype'),
+         url('../fonts/neueltpro-bd-webfont.svg#svgFontName') format('svg');
+}
+
+@font-face {
+    font-family: 'HelveticaNeueLTPro-Lt';
+    src: url('../fonts/neueltpro-lt-webfont.eot');
+    src: url('../fonts/neueltpro-lt-webfont.eot.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/neueltpro-lt-webfont.woff') format('woff'),
+         url('../fonts/neueltpro-lt-webfont.ttf')  format('truetype'),
+         url('../fonts/neueltpro-lt-webfont.svg#svgFontName') format('svg');
+}
+
+html, body{height:100%}
+body {
+  margin: 0;
+  padding: 0;
+  background:url(../images/geo_background.jpg) #EEEFF1;
+}
+body,td,th {
+  font-family: 'Press Start 2P', cursive;
+}
+body * {
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 8px;
+}
+table {
+  border-spacing: 0;
+}
+table td {
+  padding: 0;
+  margin: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+h1 {
+  font-size: 16px;
+  text-transform: none;
+  color:red;
+}
+
+.global-border{
+    position:fixed;
+    z-index:9;
+    width:100%;
+    height:100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border:solid 15px rgba(0,0,0,0.8);
+}
+
+.left{
+    display:inline-block;
+    width:50%;
+    height:100%;
+    margin-bottom:-5px;
+    text-shadow:none;
+    color: white;
+}
+.left .content {
+    position:relative;
+    min-height:100%;
+    padding: 30px 50px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-right: dashed 2px rgba(0,0,0,0.5);
+    z-index:99;
+}
+.logo{padding:0 0 30px}
+.logo img {
+    border:0;
+    width:150px;
+}
+.left h1
+{
+    margin: 50px 0 0;
+    padding-bottom: 10px;
+    font-size: 120px;
+    font-family: "HelveticaNeueLTPro-Bd", Arial, Helvetica, sans-serif;
+    color:red;
+}
+.left h2
+{
+    font-family: "HelveticaNeueLTPro-Lt", Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-size: 19px;
+    color: red;
+}
+
+.left .btn-orange{
+    margin:40px 5px 40px 0;
+    display: inline-block;
+    width: auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    line-height: 18px;
+    text-decoration: none;
+    background: #e96645;
+    color: #fff;
+    text-shadow: none;
+    text-transform: uppercase;
+    font-family: "HelveticaNeueLTPro-Bd", Arial, Helvetica, sans-serif;
+}
+.left .btn-orange:hover{
+    background: #dd5a37;
+    color: #fff;
+}
+.left .btn-ocean{
+    margin:40px 0;
+    display: inline-block;
+    width: auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    line-height: 18px;
+    text-decoration: none;
+    background: #bbbdc1;
+    color: #fff;
+    text-shadow: none;
+    text-transform: uppercase;
+    font-family: "HelveticaNeueLTPro-Bd", Arial, Helvetica, sans-serif;
+}
+.left .btn-ocean:hover{
+    background: #a6aab2;
+    color: #fff;
+}
+.social {padding:30px 0 0}
+.social a img{width:20px;}
+.social a img:hover
+{
+    -ms-filter: "alpha(opacity=70)";
+    filter: alpha(opacity=70);
+    opacity: .7;
+    -khtml-opacity: .7;
+    -moz-opacity: .7;
+    -webkit-transition: all .2s;
+    -moz-transition: all .2s;
+    -o-transition: all .2s;
+    -ms-transition: all .2s;
+    transition: all .2s;
+}
+.small{
+    color:#333;
+    font-weight: normal;
+    padding-top: 5px;
+    font-size:8px;
+}
+.right{
+    float:right;
+    width:47%;
+}
+.right .content{padding:130px 50px; position:relative; z-index:99}
+.cube {
+  /*background: #000000;*/
+  background-image: url("../images/cube.png");
+}
+.bar {
+  background-image: url("../images/cube.png");
+}
+.zleft {
+  background-image: url("../images/cube.png");
+}
+.t {
+  background-image: url("../images/cube.png");
+}
+.zright {
+  background-image: url("../images/cube.png");
+}
+.lright {
+  background-image: url("../images/cube.png");
+}
+.lleft {
+  background-image: url("../images/cube.png");
+}
+
+#main {
+  overflow: hidden;
+  max-width: 485px;
+  margin: 0 auto;
+}
+
+#main > div {
+  float: left;
+  margin-right: 18px;
+}
+.border{
+  border: dashed 2px rgba(0,0,0,0.5);
+  margin-top: 10px;
+}
+.border-mini {
+  border: dashed 2px rgba(0,0,0,0.5);
+  margin-top: 10px;
+  width: 80px;
+  height: 80px;
+}
+#main > div:first-child {
+  border: dashed 2px rgba(0,0,0,0.5);
+}
+
+#right{
+  line-height: 15px;
+  padding-top: 20px;
+}
+
+a {
+  color: rgba(0,0,0,0.8);
+  text-decoration: none;
+  transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -webkit-transition: all .2s ease-out;
+}
+#right a {
+  padding: 7px 14px;
+  background: #D8D8D8;
+  border: solid 1px #707070;
+}
+#right a:hover {
+  background: #F0F0F0;
+}
+#controls{padding-top: 17px;}
+
+.animate td {
+  transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -webkit-transition: all .2s ease-out;
+}
+.animate.out td {
+  background: #B4B4B4;
+}
+
+#keysinfo {
+  color: rgba(0,0,0,0.8);
+  padding-top: 15px;
+  display: block;
+}
+#keysinfo p {margin-top: 5px;}
+
+footer{
+  padding: 15px 0px;
+  float: none;
+  clear: both;
+  color: rgba(0,0,0,0.8);
+}
+#container,
+#preview {
+  transition: all .3s ease-out;
+  -moz-transition: all .2s ease-out;
+  -webkit-transition: all .3s ease-out;
+}
+.game {
+  background: rgba(0,0,0,.2);
+}
+
+.more {
+  text-align: right;
+}
+.clear{clear:both}
+
+@media only screen and (max-width : 1255px) {
+    .right .content {padding: 20px 50px;}
+}
+@media only screen and (max-width : 700px) {
+    .right {display: inline-block; width:100%; float:none; margin-top: 30px}
+    .left {display: inline-block; width:100%; float:none;}
+    .btn {right: 15px; left: auto}
+}
+</style>
 </head>
 
 <body>
@@ -23,7 +413,7 @@
                 <h2>Page non trouvée!<br>quelque chose ne va pas </h2>
             <!--socials-->
             <div class="social">
-                <a href="facebook.com/mustafa.ouhssaine" title="Facebook"><img src="http://squirrellabs.net/theme/tetris404/error404/images/social/facebook.png" alt="facebook"></a>
+                <a href="https://www.facebook.com/mustafa.ouhssaine" title="Facebook"><img src="http://squirrellabs.net/theme/tetris404/error404/images/social/facebook.png" alt="facebook"></a>
                 <a href="https://plus.google.com/+MustafaOuhssaine" title="Google Plus"><img src="http://squirrellabs.net/theme/tetris404/error404/images/social/google.png" alt="google plus"></a>
             </div><!--end socials-->
         </div>
